@@ -1,8 +1,7 @@
   import React, { useState }from 'react';
-  import { View, Text, Button, SafeAreaView, StyleSheet, Pressable , Dimensions,
+  import { View, Text, Button, SafeAreaView, StyleSheet, Dimensions,
   ScrollView} from 'react-native';  
   import { LineChart } from 'react-native-chart-kit';
-  import ConjugationGamePrePhase from '@/components/ConjugationGamePrePhase';  // Make sure the path is correct
   import { Ionicons } from '@expo/vector-icons';
 
   
@@ -19,7 +18,6 @@
         },
       ],
     };
-    const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
     return (
       <SafeAreaView style={styles.safeArea}>

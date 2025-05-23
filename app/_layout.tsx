@@ -53,7 +53,7 @@ export default function RootLayout() {
     useEffect(() => {
       if (isAuthenticated !== null) {
         if (isAuthenticated) {
-          router.replace('/home/home');
+          router.replace('/home');
         } else {
           router.replace('/auth/login');
         }
