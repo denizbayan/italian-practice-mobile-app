@@ -53,7 +53,7 @@ export default function RootLayout() {
     useEffect(() => {
       if (isAuthenticated !== null) {
         if (isAuthenticated) {
-          router.replace('/home');
+          router.replace('/main');
         } else {
           router.replace('/auth/login');
         }
@@ -72,7 +72,7 @@ export default function RootLayout() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <View style={{ flex: 1, paddingBottom: insets.bottom }}>
           <Stack>
-            <Stack.Screen name="home" options={{ headerShown: false }} />
+            <Stack.Screen name="main" options={{ headerShown: false }} />
             <Stack.Screen name="auth" options={{ headerShown: false}} />
             <Stack.Screen name="+not-found" />
           </Stack>

@@ -11,20 +11,16 @@ import {
 import { Checkbox } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ConjugationGameStackParamList } from '@/types/navigation';
+import { getVerbList } from '@/services/verbServices';
+import { getConjugation } from '@/services/conjugationServices';
+import { all } from 'axios';
 
-const ConjugationGamePrePhase: React.FC = () => {
-  interface AnswerData {
-    [mood: string]: {
-      [tense: string]: {
-        [pronoun: string]: {
-          answer: string;
-          isCorrect?: boolean;
-        };
-      };
-    };
-  }
+const ConjugationPreGamePhase: React.FC = () => {
 
-  const navigation = useNavigation();
+  type Navigation = NativeStackNavigationProp<ConjugationGameStackParamList, 'ConjugationPreGamePhase'>;
+  const navigation = useNavigation<Navigation>();
 
   type DropdownType = {
     key: string;
@@ -143,7 +139,34 @@ const ExampleDropdownComponent: React.FC<{
     { label: 'Gerundio', key: 'Gerundio', options: ['Presente', 'Passato'] },
   ];
 
-  const startGame = () => {
+  const startGame = async () => {
+    const selectedTensesDTO: { mood: string; tense: string; tenseDBKey: string }[] = [];
+
+    Object.entries(selectedTenses).forEach(([mood, tenses]) => {
+      tenses.forEach((tense) => {
+        selectedTensesDTO.push({ mood, tense, tenseDBKey: tense.split(" ").join("") });
+      });
+    });
+
+    const verbList = await getVerbList();
+
+
+    if (!verbList || verbList.length === 0) {
+      alert('No verbs found');
+      return;
+    }
+
+    const firstVerb = verbList[0].verbItalian;
+
+    // 2. Get conjugation of first verb
+    const firstConjugation = await getConjugation(firstVerb);
+
+    // 3. Navigate with all data
+    navigation.navigate('ConjugationGamePhase', {
+      selectedTenses: selectedTensesDTO,
+      verbList,
+      initialConjugation: firstConjugation,
+    });
   };
 
   return (
@@ -290,4 +313,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ConjugationGamePrePhase;
+export default ConjugationPreGamePhase;

@@ -3,10 +3,11 @@
   ScrollView} from 'react-native';  
   import { LineChart } from 'react-native-chart-kit';
   import { Ionicons } from '@expo/vector-icons';
-
+  import { getItem } from '@/services/storage/authStorage';
+  import { EnumSessionStorageKeys } from '@/constants/enums/EnumSessionStorageKeys';
   
   const screenWidth = Dimensions.get('window').width;
-  const username = "Dummy User"
+  const username = getItem(EnumSessionStorageKeys.USERNAME);
   const HomeScreen: React.FC = () => {
 
     const dummyProgressData = {

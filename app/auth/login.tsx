@@ -2,22 +2,37 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import styles from './styles/login_style'; // Styles'ı dışarıdan import ediyoruz
+import { signin } from '@/services/authServices';
+import { EnumSessionStorageKeys } from '@/constants/enums/EnumSessionStorageKeys';
+
+import { clearItemsAppClose, saveItem } from '@/services/storage/authStorage';
+
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setLoading(true);
     // Burada API'ye istek yapılacak. Örneğin:
-    setTimeout(() => {
+    try {
+      const data = await signin(email, password);
+      clearItemsAppClose();
+      await saveItem(EnumSessionStorageKeys.AUTH_TOKEN, data.jwt);
+      await saveItem(EnumSessionStorageKeys.EMAIL, data.email);
+      await saveItem(EnumSessionStorageKeys.SESSION_ID, data.sessionID);
+      await saveItem(EnumSessionStorageKeys.USER_ID, data.userID.toString());
+      await saveItem(EnumSessionStorageKeys.USERNAME, data.username);
+
+      router.push('/main');
+    } catch (error: any) {
+      console.error('Login error:', error.message);
+      alert(error.message); // Replace with better UX later
+    } finally {
       setLoading(false);
-      console.log('Login with:', username, password);
-      // Burada login başarılıysa yönlendirme yapılacak:
-      router.push('/home');
-    }, 2000);
+    }
   };
 
   const goToSignup = () => {
@@ -37,8 +52,8 @@ export default function LoginScreen() {
         <Text style={styles.title}>Welcome Back</Text>
 
         <TextInput
-          value={username}
-          onChangeText={setUsername}
+          value={email}
+          onChangeText={setEmail}
           placeholder="Email or Username"
           placeholderTextColor="#999"
           style={styles.input}
